@@ -116,7 +116,7 @@ export async function DELETE(request: Request) {
     
     const userId = result.payload.id as string;
 
-    // Verify ownership
+    
     const collection = await prisma.collection.findUnique({
       where: { id }
     });

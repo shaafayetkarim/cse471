@@ -19,7 +19,7 @@ export async function GET() {
       );
     }
 
-    // Verify the token
+    
     const { payload } = await jwtVerify(
       token,
       new TextEncoder().encode(process.env.JWT_SECRET || '')
@@ -48,7 +48,7 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
     
-    // Count total posts
+    
     const totalPosts = await prisma.post.count({
       where: { authorId: userId },
     });
@@ -81,7 +81,7 @@ export async function GET() {
       },
     });
     
-    // Fetch draft posts
+    
     const drafts = await prisma.post.findMany({
       where: { 
         authorId: userId,
@@ -143,3 +143,7 @@ function formatDate(date: Date): string {
     return `${Math.floor(diff / week)} week${Math.floor(diff / week) > 1 ? 's' : ''} ago`;
   }
 }
+
+
+
+// this is dashboard api
