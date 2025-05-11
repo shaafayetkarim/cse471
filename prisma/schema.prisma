@@ -1,0 +1,85 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+  
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String       @unique
+  password       String
+  avatar         String?
+  role           String       @default("user") // user, admin
+  subscription   String       @default("free") // free, premium
+  generationsLeft Int         @default(20)
+  generationsTotal Int        @default(20)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  posts          Post[]
+  collections    Collection[]
+  savedPosts     SavedPost[]
+}
+
+model Post {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  content       String
+  excerpt       String?
+  status        String       @default("draft") // Only "draft" or "published"
+  writingPhase  String       @default("Needs Editing") // "Needs Editing", "Ready to Publish", "Incomplete"
+  wordCount     Int?
+  author        User         @relation(fields: [authorId], references: [id])
+  authorId      String       @db.ObjectId
+  collections   Collection[] @relation(fields: [collectionIds], references: [id])
+  collectionIds String[]     @db.ObjectId
+  savedBy       SavedPost[]
+  likes         Int          @default(0)
+  attachments   Attachment[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+// New model for attachments
+model Attachment {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  fileName    String
+  fileType    String
+  fileSize    Int
+  fileUrl     String   // URL or path to the stored file
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId      String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model Collection {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String     @db.ObjectId
+  posts       Post[]     @relation(fields: [postIds], references: [id])
+  postIds     String[]   @db.ObjectId
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model SavedPost {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+}
+
+
