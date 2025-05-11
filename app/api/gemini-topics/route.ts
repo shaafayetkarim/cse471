@@ -41,7 +41,7 @@ export async function POST(request) {
     let extractionFailed = false;
     
     try {
-      // First try to parse as JSON
+      
       topics = JSON.parse(text);
       
       // If somehow we get an object instead of array, extract values
