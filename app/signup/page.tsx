@@ -22,6 +22,7 @@ export default function SignupPage() {
     name: "",
     email: "",
     password: ""
+    
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
